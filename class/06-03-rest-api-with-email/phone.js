@@ -1,5 +1,5 @@
 import coolsms from "coolsms-node-sdk";
-import "dotenv/config";
+
 // phone.js
 
 export function checkValidationPhone(myphone) {
