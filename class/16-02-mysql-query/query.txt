@@ -1,0 +1,49 @@
+show databases
+;
+
+use myproject03
+;
+
+show tables
+;
+
+desc product
+;
+
+select * from product;
+
+insert into product(id, name, description, price, isSoldout)
+			values(uuid(), "마우스", "정말 좋은 마우스임", 15000, false)
+;
+
+insert into product(id, name, description, price, isSoldout)
+			values(uuid(), "노트북", "맥북임ㄸ", 20000, false)
+;
+
+select *
+	from product_saleslocation
+;
+
+insert into product_saleslocation(id, address, addressDetail, lat, lng, meetingTime)
+								values(uuid(), "구로구","구로구디지털단지","0","0.1", "2022-12-31")
+;
+
+UPDATE product
+	set name="키보드"
+where price=15000
+;
+	
+SELECT p.id, name, price, address, addressDetail
+	from product p, product_saleslocation ps 
+	WHERE p.productSaleslocationId  = ps.id
+;
+
+update product
+	set productSaleslocationId = "0fb23ad7-bb7c-11ed-b332-00155d849c4f"
+where name="키보드" and price =15000
+;
+
+update product
+	set productSaleslocationId = "0fb23ad7-bb7c-11ed-b332-00155d849c4f"
+where name = "키보드" or name="마우스"
+;
