@@ -2,7 +2,7 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { BoardModule } from './apis/board/board.module';
-import {TypeOrmModule} from "@nestjs/typeorm"
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { Board } from './apis/board/entities/board.entity';
 import { Product } from './apis/product/entities/product.entity';
 import { ProductCategory } from './apis/productCategory/entities/productCategory.entity';
@@ -11,7 +11,6 @@ import { ConfigModule } from '@nestjs/config';
 import { ProductTag } from './apis/productTag/entities/productTag.entity';
 import { User } from './apis/users/entities/user.entity';
 import { ProductCategoryModule } from './apis/productCategory/productCategory.module';
-import Joi from 'joi';
 import { ProductModule } from './apis/product/product.module';
 
 @Module({
@@ -20,8 +19,8 @@ import { ProductModule } from './apis/product/product.module';
     ProductModule,
     ProductCategoryModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
-    driver:ApolloDriver,
-    autoSchemaFile: "src/commons/graphql/schema.gql"
+      driver: ApolloDriver,
+      autoSchemaFile: 'src/commons/graphql/schema.gql',
     }),
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
@@ -31,10 +30,17 @@ import { ProductModule } from './apis/product/product.module';
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: 'myproject03',
-      entities: [Board, Product, ProductCategory, ProductSaleslocation, ProductTag, User],
+      entities: [
+        Board,
+        Product,
+        ProductCategory,
+        ProductSaleslocation,
+        ProductTag,
+        User,
+      ],
       synchronize: true,
-      logging:true,
+      logging: true,
     }),
-],  
+  ],
 })
 export class AppModule {}
