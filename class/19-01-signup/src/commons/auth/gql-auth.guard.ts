@@ -7,7 +7,14 @@ import { GqlExecutionContext } from '@nestjs/graphql';
 
 // graphQL 은 한층 더 감싸져있다???? 어쨌든 graphQL 전용 Guard 따로 필요.
 // 세팅해놓은 AuthGuard를 따와서 만들자.
-export class GqlAuthAccessGuard extends AuthGuard('myGuard') {
+export class GqlAuthAccessGuard extends AuthGuard('access') {
+  getRequest(context: ExecutionContext) {
+    const ctx = GqlExecutionContext.create(context);
+    return ctx.getContext().req;
+  }
+}
+
+export class GqlAuthRefreshGuard extends AuthGuard('refresh') {
   getRequest(context: ExecutionContext) {
     const ctx = GqlExecutionContext.create(context);
     return ctx.getContext().req;

@@ -1,16 +1,19 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, ExtractJwt } from 'passport-jwt';
 
-export class JwtAccessStrategy extends PassportStrategy(Strategy, 'access') {
-  // useGuards(AuthGuard("myGuard")) 에서 가지고옴. user.resolver.ts
-  // myGuard를 이름 헷갈리니까 access로 변경
+export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
+  // refresh 토큰은 super 안 부분이 다름
+  // jwtFromRequest 부분이 bearer 방식으로 빼오는게 아니라, 브라우저 쿠키에서 빼옴.
   constructor() {
-    // 부모에다가 던져줘야함.
-    // 인가 부분임.
-    // 성공 시 validate 실행 / 실패시 에러 던짐. validate로 안내려감.
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(), // req.headers 에서 Authorization 뽑아냄.
-      secretOrKey: 'myAccessKey', // auth.service에서 jwt 토큰 생성할때 설정해준 값.
+      jwtFromRequest: (req) => {
+        const cookie = req.headers.cookie;
+        const refreshToken = cookie.replace('refreshToken=', '');
+        console.log('cookie : ', cookie);
+        console.log('refreshToken : ', refreshToken);
+        return refreshToken;
+      },
+      secretOrKey: 'myRefreshKey', // auth.service에서 jwt 토큰 생성할때 설정해준 값.
     });
   }
 
