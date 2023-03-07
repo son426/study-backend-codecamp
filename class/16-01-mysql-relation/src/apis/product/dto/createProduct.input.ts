@@ -3,7 +3,7 @@ import { Min } from 'class-validator';
 import { ProductSaleslocationInput } from 'src/apis/productSaleslocation/dto/productSaleslocation.input';
 
 @InputType()
-export class createProductInput {
+export class CreateProductInput {
   @Field(() => String)
   name: string;
 

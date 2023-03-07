@@ -63,7 +63,7 @@ export class ProductService {
       // },
       ...product,
       productSaleslocation: result1, // 얘는 전부 return 가능
-      productCategoryId: {
+      productCategory: {
         id: productCategoryId,
         // 이렇게 하면 category name은 return 못함
         // 전부 return 하고 싶으면, saleslocation처럼 객체 전체로 createProduct.input.ts에 지정해줘야함
