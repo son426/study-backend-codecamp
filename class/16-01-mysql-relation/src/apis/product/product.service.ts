@@ -7,6 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ProductSaleslocation } from '../productSaleslocation/entities/productSaleslocation.entity';
+import { ProductTag } from '../productTag/entities/productTag.entity';
 import { Product } from './entities/product.entity';
 
 @Injectable()
@@ -17,18 +18,21 @@ export class ProductService {
 
     @InjectRepository(ProductSaleslocation)
     private readonly productSaleslocationRepository: Repository<ProductSaleslocation>,
+
+    @InjectRepository(ProductTag)
+    private readonly productTagRepository: Repository<ProductTag>,
   ) {}
 
   async findAll() {
     return await this.productRepository.find({
-      relations: ['productSaleslocation', 'productCategory'],
+      relations: ['productSaleslocation', 'productCategory', 'productTags'],
     });
   }
 
   async findOne({ productId }) {
     return await this.productRepository.findOne({
       where: { id: productId },
-      relations: ['productSaleslocation', 'productCategory'],
+      relations: ['productSaleslocation', 'productCategory', 'productTags'],
     });
   }
 
@@ -44,13 +48,35 @@ export class ProductService {
     // 2. 상품과 상품거래위치 같이 등록
     // 상품 주소 테이블에 먼저 저장하고,
     // 상품에다가 한번에 다 박아.
-    const { productSaleslocation, productCategoryId, ...product } =
+    const { productSaleslocation, productCategoryId, productTags, ...product } =
       createProductInput;
     const result1 = await this.productSaleslocationRepository.save({
       ...productSaleslocation,
     });
 
-    const result2 = await this.productRepository.save({
+    // productTags = ["#컴퓨터", "#영등포", "#전자제품"]
+    const result2 = [];
+    for (let i = 0; i < productTags.length; i++) {
+      const tagname = productTags[i].replace('#', '');
+
+      // 이미 등록된 태그인지 확인
+      const prevTag = await this.productTagRepository.findOne({
+        where: { name: tagname },
+      });
+
+      // 기존에 태그가 있었다면
+      if (prevTag) {
+        result2.push(prevTag);
+        // 기존에 태그가 없었다면
+      } else {
+        const newTag = await this.productTagRepository.save({
+          name: tagname,
+        });
+        result2.push(newTag);
+      }
+    }
+
+    const result3 = await this.productRepository.save({
       // name: product.name,
       // description: product.description,
       // price: product.price,
@@ -68,9 +94,10 @@ export class ProductService {
         // 이렇게 하면 category name은 return 못함
         // 전부 return 하고 싶으면, saleslocation처럼 객체 전체로 createProduct.input.ts에 지정해줘야함
       },
+      productTags: result2,
     });
 
-    return result2;
+    return result3;
   }
 
   // repository.save 의 경우, 생성과 업데이트를 둘다 담당
