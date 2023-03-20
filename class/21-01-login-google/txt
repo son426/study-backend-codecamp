@@ -1,0 +1,11 @@
+참고
+
+1:1
+productSaleslocation
+
+n:1
+product - productCategory
+
+n:n
+product - productTag
+
